@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go-booking-app/helper"
 	"strings"
 )
 
@@ -19,13 +20,13 @@ func main() {
 
 		firstName, lastName, email, userTickets := getUserInput()
 
-		isValidName, isValidEmail, isValidTicketAmount := validateUserInput(firstName, lastName, email, userTickets, remainingTickets)
+		isValidName, isValidEmail, isValidTicketAmount := helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
 
 		if isValidName && isValidTicketAmount && isValidEmail {
 
-			bookTickets(firstName, lastName, remainingTickets, email, userTickets, conferenceName, bookings)
+			bookTickets(firstName, lastName, email, userTickets)
 
-			firstNames := getFirstNames(bookings)
+			firstNames := getFirstNames()
 			fmt.Printf("These are the first names of all of our bookings: %v\n", firstNames)
 
 			if remainingTickets == 0 {
@@ -48,11 +49,11 @@ func main() {
 
 func greetUsers() {
 	fmt.Printf("Welcome to %v booking application\n", conferenceName)
-	fmt.Printf("We have a total of %v tickets and %v are still available\n", confTickets, remainingTickets)
+	fmt.Printf("We have a total of %v tickets and %v are still available\n", conferenceTickets, remainingTickets)
 	fmt.Println("Get your tickets here to attend")
 }
 
-func getFirstNames(bookings []string) []string {
+func getFirstNames() []string {
 	firstNames := []string{}
 	for _, booking := range bookings {
 		var names = strings.Fields(booking)
@@ -60,13 +61,6 @@ func getFirstNames(bookings []string) []string {
 	}
 
 	return firstNames
-}
-
-func validateUserInput(firstName string, lastName string, email string, userTickets uint, remainingTickets uint) (bool, bool, bool) {
-	isValidName := len(firstName) >= 2 && len(lastName) >= 2
-	isValidEmail := strings.Contains(email, "@")
-	isValidTicketAmount := userTickets > 0 && userTickets <= remainingTickets
-	return isValidName, isValidEmail, isValidTicketAmount
 }
 
 func getUserInput() (string, string, string, uint) {
@@ -89,10 +83,10 @@ func getUserInput() (string, string, string, uint) {
 	return firstName, lastName, email, userTickets
 }
 
-func bookTickets(firstName string, lastName string, remainingTickets uint, email string, userTickets uint, confName string, bookings []string) {
+func bookTickets(firstName string, lastName string, email string, userTickets uint) {
 	remainingTickets = remainingTickets - userTickets
 	bookings = append(bookings, firstName+" "+lastName)
 
 	fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
-	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, confName)
+	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
 }
